@@ -60,12 +60,12 @@ Outputs:
   UserRecordApi:
     Description: "API Gateway endpoint URL for Prod stage for User Records function"
     Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/records"
-  PostDataFunction:
+  PostDataFunction: # optional
     Description: "Posting User Records Lambda Function ARN"
     Value: !GetAtt PostDataFunction.Arn
-  RecordListFunction:
+  RecordListFunction: # optional
     Description: "Accessing User Records Lambda Function ARN"
     Value: !GetAtt RecordListFunction.Arn
-  UserRecordFunctionIamRole:
+  UserRecordFunctionIamRole: # optional
     Description: "Implicit IAM Role created for User Records function"
     Value: !GetAtt PostDataFunctionRole.Arn
