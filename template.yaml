@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-app
+
+Globals:
+  Function:
+    Timeout: 3
+    CodeUri: src/
+    Runtime: python3.9
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        USER_ENV: !Ref User
+
+Parameters:
+  User:
+    Type: String
+    Default: dev
+
+Resources:
+  PostDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${User}-post_data"
+      Handler: post_data.lambda_handler
+      Policies:
+        DynamoDBCrudPolicy:
+          TableName: !Ref DynamoDBTable
+      Events:
+        PostRecords:
+          Type: HttpApi
+          Properties:
+            Path: /records
+            Method: post
+
+  RecordListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${User}-GetRecords"
+      Handler: get_data.lambda_handler
+      Policies:
+        DynamoDBCrudPolicy:
+          TableName: !Ref DynamoDBTable
+      Events:
+        GetRecords:
+          Type: HttpApi
+          Properties:
+            Path: /records
+            Method: get
+
+
+  DynamoDBTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: !Sub "${User}-UserData"
+
+Outputs:
+  UserRecordApi:
+    Description: "API Gateway endpoint URL for Prod stage for User Records function"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/records"
+  UserRecordFunction:
+    Description: "User Records Lambda Function ARN"
+    Value: !GetAtt PostDataFunction.Arn
+  UserRecordFunctionIamRole:
+    Description: "Implicit IAM Role created for User Records function"
+    Value: !GetAtt PostDataFunctionRole.Arn
