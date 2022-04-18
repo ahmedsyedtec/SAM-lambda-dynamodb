@@ -6,7 +6,7 @@ Description: >
 Globals:
   Function:
     Timeout: 3
-    CodeUri: src/
+    CodeUri: src/ # folder name
     Runtime: python3.9
     Architectures:
       - x86_64
@@ -20,31 +20,31 @@ Parameters:
     Default: dev
 
 Resources:
-  PostDataFunction:
+  PostDataFunction: #logical name
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "${User}-post_data"
-      Handler: post_data.lambda_handler
+      FunctionName: !Sub "${User}-post_data" # logical function name
+      Handler: post_data.lambda_handler # file name
       Policies:
         DynamoDBCrudPolicy:
           TableName: !Ref DynamoDBTable
       Events:
-        PostRecords:
+        PostRecords: # logical name
           Type: HttpApi
           Properties:
             Path: /records
             Method: post
 
-  RecordListFunction:
+  RecordListFunction: # logical name
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "${User}-GetRecords"
-      Handler: get_data.lambda_handler
+      FunctionName: !Sub "${User}-GetRecords" # logical function name
+      Handler: get_data.lambda_handler # file name
       Policies:
         DynamoDBCrudPolicy:
           TableName: !Ref DynamoDBTable
       Events:
-        GetRecords:
+        GetRecords: # logical name
           Type: HttpApi
           Properties:
             Path: /records
@@ -60,9 +60,12 @@ Outputs:
   UserRecordApi:
     Description: "API Gateway endpoint URL for Prod stage for User Records function"
     Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/records"
-  UserRecordFunction:
-    Description: "User Records Lambda Function ARN"
+  PostDataFunction: # optional
+    Description: "Posting User Records Lambda Function ARN"
     Value: !GetAtt PostDataFunction.Arn
-  UserRecordFunctionIamRole:
+  RecordListFunction: # optional
+    Description: "Accessing User Records Lambda Function ARN"
+    Value: !GetAtt RecordListFunction.Arn
+  UserRecordFunctionIamRole: # optional
     Description: "Implicit IAM Role created for User Records function"
     Value: !GetAtt PostDataFunctionRole.Arn
