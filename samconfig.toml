@@ -3,7 +3,7 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "dev-stack"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-acloudguru"
+s3_bucket = "samlambdadynamos3"
 s3_prefix = "dev"
 region = "us-east-1"
 confirm_changeset = false
